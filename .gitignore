@@ -1,0 +1,41 @@
+# STM32CubeMX / Keil MDK-ARM
+*.mxproject
+*.ioc.bak
+*.savedState
+
+# Keil MDK build outputs
+*.crf
+*.d
+*.o
+*.axf
+*.hex
+*.bin
+*.htm
+*.lnp
+*.lst
+*.map
+*.iex
+*.sct
+*.dep
+*.build_log.htm
+*.tra
+*.plg
+JLinkLog.txt
+*.JLinkLog.txt
+*.uvguix.*
+*.uvoptx.backup
+
+# Keil debug logs
+*.log
+*.log.lock
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated
+.DS_Store
+Thumbs.db
