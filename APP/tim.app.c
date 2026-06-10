@@ -5,21 +5,28 @@
 
 /* 用户自定义参数 -------------------------------------------------------- */
 #define ARR_VALUE       2099            // 与 CubeMX 设置的 Counter Period 一致
-#define SINE_RES        1600            // 正弦表点数
+#define SINE_RES_MAX  4000          // 最大容量，根据需求设定
 
 /* 全局变量 -------------------------------------------------------------- */
-static float sin_table[SINE_RES];       // 占空比表，范围 0~1
+static uint16_t sine_res = 1600;    // 当前实际点数
+uint32_t Frequency = 50;       // 频率，单位 Hz
+static float sin_table[SINE_RES_MAX];       // 占空比表，范围 0~1
 
 
 
 /* 正弦表生成函数 -------------------------------------------------------- */
-static void GenSinTable(void)
+void GenSinTable(uint32_t points)
 {
-    for (int i = 0; i < SINE_RES; i++)
+		if (points > SINE_RES_MAX)
+		{
+			points = SINE_RES_MAX;      // 防止越界
+		}
+		
+    for (uint16_t i = 0; i < points; i++)
     {
-        // sin_table[i] = 0.5 + 0.5 * sin(2*PI*i/SINE_RES)
-        sin_table[i] = 0.5f + 0.5f * sinf(2.0f * PI * i / SINE_RES);
+        sin_table[i] = 0.5f + 0.5f * sinf(2.0f * PI * i / points);
     }
+    sine_res = points;              // 更新全局点数
 }
 
 
@@ -27,7 +34,7 @@ static void GenSinTable(void)
 void TIM4_StartPWM(void)
 {
     // 1. 生成正弦表
-    GenSinTable();
+    GenSinTable(sine_res);
 
     // 2. 启动两路 PWM
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
@@ -41,7 +48,7 @@ void TIM4_StartPWM(void)
 // 正弦表、启动函数、中断回调（之前给你的那份）
 void TIM1_StartPWM(void)
 {
-    GenSinTable();
+    GenSinTable(sine_res);
 
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
@@ -74,20 +81,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, ccr2);
 
         // 指针下移
-        idx = (idx + 1) % SINE_RES;
+        idx = (idx + 1) % sine_res;
     }
     if (htim->Instance == TIM1)
     {
         static uint32_t idx = 0;
 
         uint32_t phase_a = idx;
-        uint32_t phase_b = (idx + SINE_RES / 3) % SINE_RES;
-        uint32_t phase_c = (idx + 2 * SINE_RES / 3) % SINE_RES;
+        uint32_t phase_b = (idx + sine_res / 3) % sine_res;
+        uint32_t phase_c = (idx + 2 * sine_res / 3) % sine_res;
 
         __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, (uint32_t)(sin_table[phase_a] * ARR_VALUE));
         __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(sin_table[phase_b] * ARR_VALUE));
         __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, (uint32_t)(sin_table[phase_c] * ARR_VALUE));
 
-        idx = (idx + 1) % SINE_RES;
+        idx = (idx + 1) % sine_res;
     }
 }
