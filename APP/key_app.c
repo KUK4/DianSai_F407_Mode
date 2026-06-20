@@ -55,13 +55,17 @@ void key_proc(void){
         GenSinTable(80000 / Frequency);
 			break;
 			case 3:
-        break;
+				m += 0.01;
+      break;
 			case 4: 
-        break;
+				m -= 0.01;
+      break;
 			case 5:
-        break;
+				dcdc_duty += 0.01;
+      break;
 			case 6:
-        break;
+				dcdc_duty -= 0.01;
+      break;
 			case 7:
         break;
 			case 8: 

@@ -5,6 +5,7 @@
 
 void GenSinTable(uint32_t points);
 void TIM1_StartPWM(void);
-void TIM4_StartPWM(void);
+void TIM4_DCAC_StartPWM(void);
+void TIM4_DCDC_StartPWM(void);
 
 #endif

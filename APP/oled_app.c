@@ -13,6 +13,8 @@ void OLED_Printf(uint8_t Line, uint8_t Column, char *format, ...)
 }
 
 void oled_proc(void){
-	OLED_Printf(1,1,"Fre:%d",Frequency);
+	OLED_Printf(1,1,"Fre:%d    ",Frequency);
+	OLED_Printf(2,1,"M:%.3F    ",m);
+	OLED_Printf(3,1,"%.2f    ",dcdc_duty);
 }
 

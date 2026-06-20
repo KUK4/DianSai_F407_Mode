@@ -33,6 +33,9 @@ extern uint8_t uart_rx_dma_buffer[128];
 extern uint16_t adc_dma_buffer[1][30];
 extern float adc_value;
 
-extern uint32_t Frequency;       
+extern uint32_t Frequency;   
 
+extern float m;
+
+extern float dcdc_duty;
 #endif
